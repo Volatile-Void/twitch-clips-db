@@ -71,6 +71,12 @@ class TwitchAPI:
             user_id = self.user_id_cache.get(login_name)
         return user_id
 
+    def get_game_info(self, ids=[], names=[], igdb_ids=[]):
+        url = 'https://api.twitch.tv/helix/games'
+        params = {'id': ids, 'name': names, 'igdb_id': igdb_ids}
+        games = self._api_request(url, params)['data']
+        return games
+
     def get_broadcaster_clips(self, broadcaster_id, max_count=-1, start_date=None, end_date=None):
         url = 'https://api.twitch.tv/helix/clips'
         yielded_clips = 0
