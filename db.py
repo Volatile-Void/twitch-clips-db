@@ -2,7 +2,7 @@ import datetime
 
 def format_sql_value(value):
     if value is None:
-        value = 'null'
+        return 'null'
     elif isinstance(value, bool):
         value = int(value)
     elif isinstance(value, datetime.datetime):
