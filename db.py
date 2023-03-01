@@ -3,9 +3,9 @@ import datetime
 def format_sql_value(value):
     if isinstance(value, bool):
         value = int(value)
-    if isinstance(value, datetime.datetime):
+    elif isinstance(value, datetime.datetime):
         value = value.strftime('%Y-%m-%dT%H:%M:%S.%f')
-    if isinstance(value, datetime.date):
+    elif isinstance(value, datetime.date):
         value = value.strftime('%Y-%m-%d')
     return repr(value)
 
