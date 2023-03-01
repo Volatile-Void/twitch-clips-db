@@ -56,7 +56,7 @@ class TwitchAPI:
     def to_rfc3339(dt):
         return dt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
 
-    def get_user_info(self, ids=[], login_names=[]):
+    def get_user_info(self, ids=(), login_names=()):
         url = 'https://api.twitch.tv/helix/users'
         params = {'id': ids, 'login': login_names}
         users = self._api_request(url, params)['data']
@@ -71,7 +71,7 @@ class TwitchAPI:
             user_id = self.user_id_cache.get(login_name)
         return user_id
 
-    def get_game_info(self, ids=[], names=[], igdb_ids=[]):
+    def get_game_info(self, ids=(), names=(), igdb_ids=()):
         url = 'https://api.twitch.tv/helix/games'
         params = {'id': ids, 'name': names, 'igdb_id': igdb_ids}
         games = self._api_request(url, params)['data']
