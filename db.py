@@ -74,7 +74,7 @@ class Table:
 
     @classmethod
     def create_insert_sql_part(cls, obj):
-        return '(%s)' % ','.join(format_sql_value(obj[col]) for col in cls.column_list)
+        return '(%s)' % ','.join(format_sql_value(obj.get(col)) for col in cls.column_list)
 
     @classmethod
     def create_insert_sql(cls, objects):
