@@ -1,7 +1,9 @@
 import datetime
 
 def format_sql_value(value):
-    if isinstance(value, bool):
+    if value is None:
+        value = 'null'
+    elif isinstance(value, bool):
         value = int(value)
     elif isinstance(value, datetime.datetime):
         value = value.strftime('%Y-%m-%dT%H:%M:%S.%f')
