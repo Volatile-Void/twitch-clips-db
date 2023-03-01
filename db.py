@@ -6,7 +6,7 @@ def format_sql_value(value):
     if isinstance(value, bool):
         return repr(int(value))
     if isinstance(value, datetime.datetime):
-        return "'%s'" % value.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+        return "'%s'" % value.strftime('%Y-%m-%dT%H:%M:%S.%f')
     if isinstance(value, datetime.date):
         return "'%s'" % value.strftime('%Y-%m-%d')
     return repr(value)
