@@ -79,12 +79,12 @@ class Column:
         self.data_type = data_type
         self.constraint = constraint
 
-    def create_column(self):
+    def __str__(self):
         return '%s %s%s' % (self.name, self.data_type, ' %s' % self.constraint if self.constraint else '')
 
 class Constraint:
-    def create_constraint(self):
-        raise NotImplementedError()
+    def __str__(self):
+        return self.create_constraint()
 
 class PrimaryKeyConstraint(Constraint):
     def __init__(self, *columns):
@@ -129,8 +129,8 @@ class Table:
             'if_not_exists': ' if not exists' if if_not_exists else '',
             'schema': '%s.' % schema if schema else '',
             'table_name': cls.name,
-            'columns': ','.join(c.create_column() for c in cls.columns),
-            'constraints': ','.join(('', *(c.create_constraint() for c in cls.constraints))),
+            'columns': ','.join(str(c) for c in cls.columns),
+            'constraints': ','.join(('', *(str(c) for c in cls.constraints))),
             'options': ' %s' % ','.join(options) if options else '',
         }
         return sql % parts
