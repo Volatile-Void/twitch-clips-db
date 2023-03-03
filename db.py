@@ -156,7 +156,7 @@ class Table:
             elif upsert_update_columns:
                 raise ValueError('\'upsert_condition_columnns\' is required if updating columns in the upsert')
             if upsert_update_columns:
-                upsert_updates = ('%s.%s=excluded.%s' % (cls.name, c, c) for c in upsert_update_columns)
+                upsert_updates = ('%s=excluded.%s' % (c, c) for c in upsert_update_columns)
                 upsert_action = 'update set %s' % ','.join(upsert_updates)
             upsert_sql = ' on conflict%(target)s do %(action)s%(where)s' %  {
                 'target': upsert_target,
