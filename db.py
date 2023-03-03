@@ -139,8 +139,10 @@ class Table:
     def create_insert_sql_part(cls, obj):
         return '(%s)' % ','.join(format_sql_value(obj.get(col)) for col in cls.column_list)
 
+# TODO: returning
+
     @classmethod
-    def create_insert_sql(cls, objects, upsert_condition_columnns=None, upsert_update_columns=None, upsert_where=''):
+    def create_insert_sql(cls, objects, upsert_condition_columnns=None, upsert_update_columns=None, upsert_where='', returning_columns=None):
         if not isinstance(objects, (list, tuple)):
             objects = objects,
         upsert_sql = ''
@@ -163,12 +165,13 @@ class Table:
                 'action': upsert_action,
                 'where': ' where %s' % upsert_where if upsert_where and upsert_update_columns else '',
             }
-        sql = 'insert into %(table)s(%(columns)s) values %(rows)s%(upsert)s'
+        sql = 'insert into %(table)s(%(columns)s) values %(rows)s%(upsert)s%(returning)s'
         parts = {
             'table': cls.name,
             'columns': ','.join(cls.column_list),
             'rows': ','.join(cls.create_insert_sql_part(obj) for obj in objects),
             'upsert': upsert_sql,
+            'returning': ' returning %s' % ','.join(returning_columns) if returning_columns else '',
         }
         return sql % parts
 
