@@ -140,7 +140,7 @@ class Table:
         return '(%s)' % ','.join(format_sql_value(obj.get(col)) for col in cls.column_list)
 
     @classmethod
-    def create_insert_sql(cls, objects, upsert_condition_columnns=None, upsert_update_cols=None, upsert_where='', returning_cols=None):
+    def create_insert_sql(cls, objects, upsert_condition_cols=None, upsert_update_cols=None, upsert_where='', returning_cols=None):
         if not isinstance(objects, (list, tuple)):
             objects = objects,
         upsert_sql = ''
@@ -149,12 +149,12 @@ class Table:
                 upsert_update_cols = upsert_update_cols,
             upsert_target = ''
             upsert_action = 'nothing'
-            if upsert_condition_columnns:
-                if not isinstance(upsert_condition_columnns, (list, tuple)):
-                    upsert_condition_columnns = upsert_condition_columnns,
-                upsert_target = '(%s)' % ','.join(upsert_condition_columnns)
+            if upsert_condition_cols:
+                if not isinstance(upsert_condition_cols, (list, tuple)):
+                    upsert_condition_cols = upsert_condition_cols,
+                upsert_target = '(%s)' % ','.join(upsert_condition_cols)
             elif upsert_update_cols:
-                raise ValueError('\'upsert_condition_columnns\' is required if updating columns in the upsert')
+                raise ValueError('\'upsert_condition_cols\' is required if updating columns in the upsert')
             if upsert_update_cols:
                 upsert_updates = ('%s=excluded.%s' % (c, c) for c in upsert_update_cols)
                 upsert_action = 'update set %s' % ','.join(upsert_updates)
