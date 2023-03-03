@@ -139,8 +139,6 @@ class Table:
     def create_insert_sql_part(cls, obj):
         return '(%s)' % ','.join(format_sql_value(obj.get(col)) for col in cls.column_list)
 
-# TODO: returning
-
     @classmethod
     def create_insert_sql(cls, objects, upsert_condition_columnns=None, upsert_update_columns=None, upsert_where='', returning_columns=None):
         if not isinstance(objects, (list, tuple)):
