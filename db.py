@@ -140,28 +140,28 @@ class Table:
         return '(%s)' % ','.join(format_sql_value(obj.get(col)) for col in cls.column_list)
 
     @classmethod
-    def create_insert_sql(cls, objects, upsert_condition_columnns=None, upsert_update_columns=None, upsert_where='', returning_columns=None):
+    def create_insert_sql(cls, objects, upsert_condition_columnns=None, upsert_update_cols=None, upsert_where='', returning_cols=None):
         if not isinstance(objects, (list, tuple)):
             objects = objects,
         upsert_sql = ''
-        if upsert_update_columns is not None:
-            if not isinstance(upsert_update_columns, (list, tuple)):
-                upsert_update_columns = upsert_update_columns,
+        if upsert_update_cols is not None:
+            if not isinstance(upsert_update_cols, (list, tuple)):
+                upsert_update_cols = upsert_update_cols,
             upsert_target = ''
             upsert_action = 'nothing'
             if upsert_condition_columnns:
                 if not isinstance(upsert_condition_columnns, (list, tuple)):
                     upsert_condition_columnns = upsert_condition_columnns,
                 upsert_target = '(%s)' % ','.join(upsert_condition_columnns)
-            elif upsert_update_columns:
+            elif upsert_update_cols:
                 raise ValueError('\'upsert_condition_columnns\' is required if updating columns in the upsert')
-            if upsert_update_columns:
-                upsert_updates = ('%s=excluded.%s' % (c, c) for c in upsert_update_columns)
+            if upsert_update_cols:
+                upsert_updates = ('%s=excluded.%s' % (c, c) for c in upsert_update_cols)
                 upsert_action = 'update set %s' % ','.join(upsert_updates)
             upsert_sql = ' on conflict%(target)s do %(action)s%(where)s' %  {
                 'target': upsert_target,
                 'action': upsert_action,
-                'where': ' where %s' % upsert_where if upsert_where and upsert_update_columns else '',
+                'where': ' where %s' % upsert_where if upsert_where and upsert_update_cols else '',
             }
         sql = 'insert into %(table)s(%(columns)s) values %(rows)s%(upsert)s%(returning)s'
         parts = {
@@ -169,7 +169,7 @@ class Table:
             'columns': ','.join(cls.column_list),
             'rows': ','.join(cls.create_insert_sql_part(obj) for obj in objects),
             'upsert': upsert_sql,
-            'returning': ' returning %s' % ','.join(returning_columns) if returning_columns else '',
+            'returning': ' returning %s' % ','.join(returning_cols) if returning_cols else '',
         }
         return sql % parts
 
