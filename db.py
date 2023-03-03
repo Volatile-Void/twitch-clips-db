@@ -140,14 +140,35 @@ class Table:
         return '(%s)' % ','.join(format_sql_value(obj.get(col)) for col in cls.column_list)
 
     @classmethod
-    def create_insert_sql(cls, objects):
+    def create_insert_sql(cls, objects, upsert_condition_columnns=None, upsert_update_columns=None, upsert_where=''):
         if not isinstance(objects, (list, tuple)):
             objects = objects,
-        sql = 'insert into %(table)s(%(columns)s) values %(rows)s'
+        upsert_sql = ''
+        if upsert_update_columns is not None:
+            if not isinstance(upsert_update_columns, (list, tuple)):
+                upsert_update_columns = upsert_update_columns,
+            upsert_target = ''
+            upsert_action = 'nothing'
+            if upsert_condition_columnns:
+                if not isinstance(upsert_condition_columnns, (list, tuple)):
+                    upsert_condition_columnns = upsert_condition_columnns,
+                upsert_target = '(%s)' % ','.join(upsert_condition_columnns)
+            elif upsert_update_columns:
+                raise ValueError('\'upsert_condition_columnns\' is required if updating columns in the upsert')
+            if upsert_update_columns:
+                upsert_updates = ('%s.%s=excluded.%s' % (cls.name, c, c) for c in upsert_update_columns)
+                upsert_action = 'update set %s' % ','.join(upsert_updates)
+            upsert_sql = ' on conflict%(target)s do %(action)s%(where)s' %  {
+                'target': upsert_target,
+                'action': upsert_action,
+                'where': ' where %s' % upsert_where if upsert_where and upsert_update_columns else '',
+            }
+        sql = 'insert into %(table)s(%(columns)s) values %(rows)s%(upsert)s'
         parts = {
             'table': cls.name,
             'columns': ','.join(cls.column_list),
             'rows': ','.join(cls.create_insert_sql_part(obj) for obj in objects),
+            'upsert': upsert_sql,
         }
         return sql % parts
 
